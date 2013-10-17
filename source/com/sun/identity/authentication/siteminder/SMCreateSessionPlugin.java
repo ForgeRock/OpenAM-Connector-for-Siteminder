@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMCreateSessionPlugin.java,v 1.5 2012/05/15 09:55:28 jah Exp $
+ * $Id: SMCreateSessionPlugin.java,v 1.7 2013/01/15 10:12:47 jah Exp $
  *
  */
 
@@ -110,6 +110,14 @@ public class SMCreateSessionPlugin implements AMPostAuthProcessInterface {
         if (smLoginURL == null) {
            throw new AuthenticationException("smLoginURL is not set");
         }
+        if (request == null) {
+           debugLog.error("SMCreateSessionPlugin.onLoginSuccess() request is null");
+           throw new AuthenticationException("SMCreateSessionPlugin.onLoginSuccess() request is null");
+        }
+        if (response == null) {
+           debugLog.error("SMCreateSessionPlugin.onLoginSuccess() response is null");
+           throw new AuthenticationException("SMCreateSessionPlugin.onLoginSuccess() response is null");
+        }
 
         int retCode = 500;
         String famSession = ssoToken.getTokenID().toString();
@@ -125,19 +133,21 @@ public class SMCreateSessionPlugin implements AMPostAuthProcessInterface {
 
         // If we already have SM session then don't bother creating a new one
         Cookie[] cookies = request.getCookies();
-        for (int i=0; i < cookies.length; i++) {
-            Cookie cookie = cookies[i];
-            // if (debugLog.messageEnabled()) {
-            //     debugLog.message("Cookie name=" + cookie.getName() + ", value=" + cookie.getValue());
-            // }
-            if ((cookie.getName().equals(smCookieName)) &&
-                !(cookie.getValue().equals("LOGGEDOFF"))) {
-                    if (debugLog.messageEnabled()) {
-                        debugLog.message("SMCreateSessionPlugin found existing SM session, skipping session creation.");
-                    }
-                return;
-            }
-        } // for cookies
+        if (cookies != null) {
+            for (int i=0; i < cookies.length; i++) {
+                Cookie cookie = cookies[i];
+                // if (debugLog.messageEnabled()) {
+                //     debugLog.message("Cookie name=" + cookie.getName() + ", value=" + cookie.getValue());
+                // }
+                if ((cookie.getName().equals(smCookieName)) &&
+                    !(cookie.getValue().equals("LOGGEDOFF"))) {
+                        if (debugLog.messageEnabled()) {
+                            debugLog.message("SMCreateSessionPlugin found existing SM session, skipping session creation.");
+                        }
+                    return;
+                }
+            } // for cookies
+        } // cookies != null
 
         if (debugLog.messageEnabled()) {
             debugLog.message("Attempting SiteMinder login, user=" + amid.getName() + ", credentials=" + famSession);
