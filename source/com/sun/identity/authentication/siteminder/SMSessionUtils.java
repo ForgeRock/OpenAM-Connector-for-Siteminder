@@ -118,6 +118,7 @@ public class SMSessionUtils {
 
         // Set connection timeout and SiteMinder request properties
         con.setConnectTimeout(5000);
+        con.setInstanceFollowRedirects(false);
         con.setRequestProperty("Cookie", "SMCHALLENGE=YES");
         con.setRequestProperty("Authorization", authorization);
 
