@@ -24,13 +24,14 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMSessionUtils.java,v 1.6 2012/05/15 09:55:28 jah Exp $
+ * $Id: SMSessionUtils.java,v 1.8 2013/07/19 12:07:35 jah Exp $
  *
  */
 
 
 package com.sun.identity.authentication.siteminder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
@@ -127,12 +128,16 @@ public class SMSessionUtils {
           throw new Exception("Connection to SMLoginURL Failed, reason=" + e.getMessage());
         }
 
+        if (debugLog.messageEnabled()) {
+          debugLog.message("Beginning to parse HTTP response");
+        }
+
         // Get response code and cookie
         respCode = con.getResponseCode();
-        String setCookie = con.getHeaderField("Set-Cookie");
+        List<String> setCookies = (List<String>)con.getHeaderFields().get("Set-Cookie");
         if (debugLog.messageEnabled()) {
           debugLog.message("ResponseCode=" + respCode);
-          debugLog.message("Set-Cookie=" + setCookie);
+          debugLog.message("Set-Cookie=" + setCookies);
         }
 
         // Consume any content from the connection
@@ -160,15 +165,32 @@ public class SMSessionUtils {
         // so we need to check for SM session cookie in the response
         if ((respCode == 200) || (respCode == 302)) {
           // Check if we got SM session cookie
-          if (setCookie.startsWith(smCookieName + "=")) {
+          String smCookie = null;
+          if (setCookies != null) {
+            Iterator it = setCookies.iterator();
+            while (it.hasNext()) {
+              String setCookie = (String)it.next();
+              if (debugLog.messageEnabled()) {
+                debugLog.message("setCookie=" + setCookie);
+              }
+              if (setCookie.startsWith(smCookieName + "=")) {
+                if (debugLog.messageEnabled()) {
+                  debugLog.message("Found SiteMinder cookie in response");
+                }
+                smCookie = setCookie;
+              }
+            } // while it.hasNext()
+          } // if setCookies != null
+
+          if (smCookie != null) {
             if (debugLog.messageEnabled()) {
               debugLog.message("Siteminder authentication succesful, user=" + userName);
             }
-            response.addHeader("Set-Cookie", setCookie);
+            response.addHeader("Set-Cookie", smCookie);
             respCode = 200;
           }
           else {
-            debugLog.error("SMSessionUtils.createSmSession() Siteminder authentication unsuccesful, user=" + userName + ", Set-Cookie=" + setCookie);
+            debugLog.error("SMSessionUtils.createSmSession() Siteminder authentication unsuccesful, user=" + userName + ", Set-Cookie=" + setCookies);
             respCode = 403; // Forbidden
           }
         }
