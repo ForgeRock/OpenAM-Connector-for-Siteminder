@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.4 2012/03/13 09:31:39 jah Exp $
+$Id: README.txt,v 1.6 2014/03/17 09:58:00 jah Exp $
 
 This is the README for OpenAM connector for Computer Associates (CA) SiteMinder.
 
@@ -148,7 +148,34 @@ SiteMinder configuration
 
 OpenAM configuration
 
-TODO
+There are multiple modules for different tasks:
+   * SiteMinder authentication module that authenticates a user to OpenAM
+     using the existing SiteMinder session.
+   * SiteMinder session creation plugin that creates a SiteMinder session
+     when user successfully logs into OpenAM.
+   * SAML2 Adapter for creating a SiteMinder session on succesful federation.
+
+1) SiteMinder authentication module configuration.
+   * Add the SiteMinder agent/SDK library directories to LD_LIBRARY_PATH
+     of the web container running OpenAM.
+   * Create the SiteMinder authentication service:
+      ssoadm create-svc -X SMAuthService.xml
+   * Register the authentication module:
+      ssoadm register-auth-module -a \
+      com.sun.identity.authentication.siteminder.SMAuthModule
+   * Add the authentication module SMAuthModule to the realm you want to
+     use with SiteMinder. Most of the configuration parameters are the same
+     as for any SiteMinder agent so see SiteMinder documentation for
+     further information.
+
+2) SiteMinder session creation plugin configuration.
+   * Edit WEB-INF/classes/SMCreateSessionPlugin.properties to set
+     the login URL (see SiteMinder configuration instructions above for
+     information about setting up this login URL) and SiteMinder
+     session cookie name.
+   * Add com.sun.identity.authentication.siteminder.SMCreateSessionPlugin
+     to the authentication post processing classes in OpenAM realm
+     authentication configuration.
 
 Troubleshooting
 ===============
