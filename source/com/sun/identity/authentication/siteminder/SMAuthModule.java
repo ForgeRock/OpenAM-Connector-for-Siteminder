@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMAuthModule.java,v 1.5 2012/05/15 09:55:28 jah Exp $
+ * $Id: SMAuthModule.java,v 1.9 2014/03/26 09:30:09 jah Exp $
  *
  */
 
@@ -67,29 +67,30 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SMAuthModule extends AMLoginModule {
 
-    private static final String COOKIE_NAME = "SMCookieName"; 
+    private static final String COOKIE_NAME = "SMCookieName";
     private static final String SHARED_SECRET = "SharedSecret";
     private static final String SMHOSTFILE = "SmHostFile";
     private static final String SERVER_IP = "PolicyServerIPAddress";
     private static final String CHECK_REMOTE_USER_ONLY = "CheckRemoteUserOnly";
     private static final String TRUST_HOSTNAME = "TrustedHostName";
-    private static final String ACCOUNT_PORT = "AccountingPort"; 
+    private static final String ACCOUNT_PORT = "AccountingPort";
     private static final String AUTHN_PORT = "AuthenticationPort";
     private static final String AUTHZ_PORT = "AuthorizationPort";
     private static final String MIN_CONNECTION = "MinimumConnection";
-    private static final String MAX_CONNECTION = "MaximumConnection"; 
+    private static final String MAX_CONNECTION = "MaximumConnection";
     private static final String STEP_CONNECTION = "StepConnection";
     private static final String REQUEST_TIMEOUT = "RequestTimeout";
-    private static final String REMOTE_USER_HEADER_NAME = 
+    private static final String REMOTE_USER_HEADER_NAME =
                                 "RemoteUserHeaderName";
+    private static final String AUTH_LEVEL = "AuthLevel";
 
     private static Debug debugLog = Debug.getInstance("SiteMinder");
 
     private String smCookieName = null;
-    private String sharedSecret = null;    
+    private String sharedSecret = null;
     private String smHostFile = null;
     private String policyServerIP = null;
-    private boolean checkRemoteUserOnly = false; 
+    private boolean checkRemoteUserOnly = false;
     private String hostName = null;
     private int accountingPort = 44441;
     private int authenticationPort = 44442;
@@ -101,6 +102,7 @@ public class SMAuthModule extends AMLoginModule {
     private String userId = null;
     private Principal userPrincipal = null;
     private String remoteUserHeader = "REMOTE_USER";
+    private int authLevel = 0;
     private Set configuredHTTPHeaders = null;
 
     public SMAuthModule() throws LoginException{
@@ -117,23 +119,23 @@ public class SMAuthModule extends AMLoginModule {
             debugLog.message("SMAuthModule.init() begin options=" + options);
         }
 
-        smCookieName = CollectionHelper.getMapAttr(options, 
+        smCookieName = CollectionHelper.getMapAttr(options,
                        COOKIE_NAME, "SMSESSION");
 
         sharedSecret = CollectionHelper.getMapAttr(options, SHARED_SECRET);
         smHostFile = CollectionHelper.getMapAttr(options, SMHOSTFILE);
         policyServerIP = CollectionHelper.getMapAttr(options, SERVER_IP);
         checkRemoteUserOnly = Boolean.valueOf(CollectionHelper.getMapAttr(
-                   options, CHECK_REMOTE_USER_ONLY, "false")).booleanValue(); 
+                   options, CHECK_REMOTE_USER_ONLY, "false")).booleanValue();
         hostName = CollectionHelper.getMapAttr(options, TRUST_HOSTNAME);
         configuredHTTPHeaders = (Set)options.get("HTTPHeaders");
         try {
-            String tmp = CollectionHelper.getMapAttr(options, 
+            String tmp = CollectionHelper.getMapAttr(options,
                      ACCOUNT_PORT, "44441");
             accountingPort = Integer.parseInt(tmp);
 
             tmp = CollectionHelper.getMapAttr(options,
-                  AUTHN_PORT, "44442"); 
+                  AUTHN_PORT, "44442");
             authenticationPort = Integer.parseInt(tmp);
 
             tmp = CollectionHelper.getMapAttr(options,
@@ -146,27 +148,34 @@ public class SMAuthModule extends AMLoginModule {
             tmp = CollectionHelper.getMapAttr(options, MAX_CONNECTION);
             connectionMax = Integer.parseInt(tmp);
 
-            tmp =  CollectionHelper.getMapAttr(options, STEP_CONNECTION); 
+            tmp =  CollectionHelper.getMapAttr(options, STEP_CONNECTION);
             connectionStep = Integer.parseInt(tmp);
 
             tmp =  CollectionHelper.getMapAttr(options,  REQUEST_TIMEOUT);
             timeout = Integer.parseInt(tmp);
-                  
+
+            tmp = CollectionHelper.getMapAttr(options, AUTH_LEVEL, "0");
+            authLevel = Integer.parseInt(tmp);
+
         } catch (Exception e) {
             debugLog.error("SMAuthModule Caught exception parsing configuration settings.", e);
         }
 
         remoteUserHeader = CollectionHelper.getMapAttr(options,
                            REMOTE_USER_HEADER_NAME, "REMOTE_USER");
-        
+
         // Set shared secret and trusted host name. Note that values read
         // from SmHostFile will override the ones set in module configuration.
         parseSmHostFile();
 
+        if (!setAuthLevel(authLevel)) {
+            debugLog.error("SMAuthModule unable to set authLevel to " + authLevel);
+        }
+
         if (debugLog.messageEnabled()) {
             debugLog.message("SMAuthModule.init() end");
         }
-    } 
+    }
 
     private boolean parseSmHostFile() {
       if ((smHostFile == null) || (smHostFile.length() == 0)) {
@@ -213,14 +222,12 @@ public class SMAuthModule extends AMLoginModule {
      * validate the SM session by the siteminder SDK since the same thing
      * might have already been validated by the agent.
      */
-    public int process(Callback[] callbacks, int state) 
+    public int process(Callback[] callbacks, int state)
                  throws AuthLoginException {
 
         if (debugLog.messageEnabled()) {
             debugLog.message("SMAuthModule.process() start");
         }
-        // Extra logging to stdout
-        System.out.println("SMAuthModule.process() start at " + (new Date()).toString());
 
         HttpServletRequest request = getHttpServletRequest();
 
@@ -248,8 +255,7 @@ public class SMAuthModule extends AMLoginModule {
 
         String SMCookie =  null;
         boolean cookieFound = false;
-        for (int i=0; i < cookies.length; i++) {
-           Cookie cookie = cookies[i];
+        for (Cookie cookie : cookies) {
            if (cookie.getName().equals(smCookieName)) {
               cookieFound = true;
               String value = cookie.getValue();
@@ -276,8 +282,8 @@ public class SMAuthModule extends AMLoginModule {
         // SmAgent begin
         InitDef id = new InitDef(hostName, sharedSecret, true, new ServerDef());
         String[] policyServerIPs = policyServerIP.split(",");
-        for (int i = 0; i < policyServerIPs.length; i++) {
-            id.addServerDef(policyServerIPs[i].trim(),
+        for (String IPAddr : policyServerIPs) {
+            id.addServerDef(IPAddr.trim(),
                             connectionMin,
                             connectionMax,
                             connectionStep,
@@ -356,17 +362,13 @@ public class SMAuthModule extends AMLoginModule {
           debugLog.message("SMAuthModule.process() end");
         }
 
-        // Extra logging to stdout
-        System.out.println("SiteMinder authentication succesful, user=" + userId);
-        System.out.println("SMAuthModule.process() end at " + (new Date()).toString());
-
         return ISAuthConstants.LOGIN_SUCCEED;
 
     } // process
 
     /**
      * Returns the authenticated principal.
-     * This is consumed by the authentication framework to set the 
+     * This is consumed by the authentication framework to set the
      * principal
      */
     public java.security.Principal getPrincipal() {

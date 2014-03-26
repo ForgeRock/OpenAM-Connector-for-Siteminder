@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: OpenAMAuthScheme.java,v 1.2 2012/02/17 11:23:57 jah Exp $
+ * $Id: OpenAMAuthScheme.java,v 1.4 2014/03/19 14:31:08 jah Exp $
  *
  */
 
@@ -372,8 +372,8 @@ public class OpenAMAuthScheme implements SmAuthScheme {
                  apictx.log("verifyFMToken() Token is valid");
                }
             return token.getPrincipal().getName();
-        } catch (Throwable ex2) {            
-            apictx.error("verifyFMToken() caught Throwable=" + ex2.getMessage());
+        } catch (Exception ex2) {            
+            apictx.error("verifyFMToken() caught Exception=" + ex2.getMessage());
         }
         return null;
     }

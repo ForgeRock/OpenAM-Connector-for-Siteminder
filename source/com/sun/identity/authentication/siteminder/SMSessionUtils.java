@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMSessionUtils.java,v 1.8 2013/07/19 12:07:35 jah Exp $
+ * $Id: SMSessionUtils.java,v 1.10 2014/03/19 14:31:08 jah Exp $
  *
  */
 
@@ -198,8 +198,8 @@ public class SMSessionUtils {
         else {
             debugLog.error("SMSessionUtils.createSmSession() Siteminder authentication unsuccesful, user=" + userName + ", response=" + respCode);
         }
-      } catch (Throwable t) {
-        debugLog.error("SMSessionUtils.createSmSession() Caught Throwable.", t);
+      } catch (Exception e) {
+        debugLog.error("SMSessionUtils.createSmSession() Caught Exception.", e);
         throw new Exception("Siteminder session creation failed");
       }
 

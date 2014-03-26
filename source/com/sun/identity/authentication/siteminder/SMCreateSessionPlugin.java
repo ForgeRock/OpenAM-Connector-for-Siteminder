@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMCreateSessionPlugin.java,v 1.7 2013/01/15 10:12:47 jah Exp $
+ * $Id: SMCreateSessionPlugin.java,v 1.10 2014/03/26 09:30:09 jah Exp $
  *
  */
 
@@ -134,19 +134,18 @@ public class SMCreateSessionPlugin implements AMPostAuthProcessInterface {
         // If we already have SM session then don't bother creating a new one
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (int i=0; i < cookies.length; i++) {
-                Cookie cookie = cookies[i];
-                // if (debugLog.messageEnabled()) {
-                //     debugLog.message("Cookie name=" + cookie.getName() + ", value=" + cookie.getValue());
-                // }
-                if ((cookie.getName().equals(smCookieName)) &&
-                    !(cookie.getValue().equals("LOGGEDOFF"))) {
-                        if (debugLog.messageEnabled()) {
-                            debugLog.message("SMCreateSessionPlugin found existing SM session, skipping session creation.");
-                        }
-                    return;
-                }
-            } // for cookies
+          for (Cookie cookie : cookies) {
+            // if (debugLog.messageEnabled()) {
+            //     debugLog.message("Cookie name=" + cookie.getName() + ", value=" + cookie.getValue());
+            // }
+            if ((cookie.getName().equals(smCookieName)) &&
+                !(cookie.getValue().equals("LOGGEDOFF"))) {
+                    if (debugLog.messageEnabled()) {
+                        debugLog.message("SMCreateSessionPlugin found existing SM session, skipping session creation.");
+                    }
+                return;
+            }
+          } // for cookies
         } // cookies != null
 
         if (debugLog.messageEnabled()) {
@@ -161,8 +160,6 @@ public class SMCreateSessionPlugin implements AMPostAuthProcessInterface {
         }
 
         if (retCode == 200) {
-           // Extra logging to stdout
-           System.out.println("createSmSession() succesful, user=" + amid.getName());
            if (debugLog.messageEnabled()) {
              debugLog.message("createSmSession() succesful, user=" + amid.getName());
            }

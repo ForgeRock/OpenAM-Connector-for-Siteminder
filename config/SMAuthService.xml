@@ -26,7 +26,7 @@
 
     Portions Copyrighted 2011-2012 Progress Software Corporation
 
-    $Id: SMAuthService.xml,v 1.2 2012/02/17 11:23:57 jah Exp $
+    $Id: SMAuthService.xml,v 1.4 2014/03/17 10:58:20 jah Exp $
 
 -->
 
@@ -167,6 +167,15 @@
                     i18nKey="a115">
                 </AttributeSchema>
 
+                <AttributeSchema name="AuthLevel"
+                    type="single"
+                    syntax="number_range" rangeStart="0" rangeEnd="2147483647"
+                    i18nKey="a116">
+                    <DefaultValues>
+                        <Value>0</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+
             <SubSchema name="serverconfig" inheritance="multiple">            
                 <AttributeSchema name="SMCookieName"
                     type="single"
@@ -290,6 +299,15 @@
                     type="list"
                     syntax="string"
                     i18nKey="a115">
+                </AttributeSchema>
+
+                <AttributeSchema name="AuthLevel"
+                    type="single"
+                    syntax="number_range" rangeStart="0" rangeEnd="2147483647"
+                    i18nKey="a116">
+                    <DefaultValues>
+                        <Value>0</Value>
+                    </DefaultValues>
                 </AttributeSchema>
 
             </SubSchema>
