@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMSessionUtils.java,v 1.10 2014/03/19 14:31:08 jah Exp $
+ * $Id: SMSessionUtils.java,v 1.11 2014/03/31 09:15:43 jah Exp $
  *
  */
 
@@ -83,6 +83,11 @@ public class SMSessionUtils {
 
       if (debugLog.messageEnabled()) {
         debugLog.message("SMSessionUtils.createSmSession() begin.");
+      }
+
+      if (response == null) {
+          debugLog.error("SMSessionUtils.createSmSession(): ServletResponse object is null");
+          throw new Exception("ServletResponse object is null");
       }
 
       if (smCookieName == null) {

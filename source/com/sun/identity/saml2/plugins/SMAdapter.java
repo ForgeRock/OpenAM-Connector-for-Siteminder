@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMAdapter.java,v 1.5 2012/05/15 09:55:28 jah Exp $
+ * $Id: SMAdapter.java,v 1.7 2014/03/31 09:15:44 jah Exp $
  *
  */
 
@@ -83,6 +83,12 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
      *          <code>REALM</code> refers to the realm of the hosted entity.
      */
     public void initialize(Map initParams) {
+
+        if (debugLog.messageEnabled()) {
+            for (Object mapKey : initParams.keySet()) {
+                debugLog.error("SMAdapter param " + (String)mapKey + " = " + (String)initParams.get(mapKey));
+            }
+        }
 
         smLoginURL = (String)initParams.get("SMLoginURL");
         smCookieName = (String)initParams.get("SMCookieName");
@@ -185,7 +191,12 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
     throws SAML2Exception {
 
         if (smSessionUtils == null) {
-          throw new SAML2Exception("smSessionUtils is null");
+          debugLog.error("SMAdapter.postSingleSignOnSuccess(): smSessionUtils is null");
+          throw new SAML2Exception("SMAdapter: smSessionUtils is null");
+        }
+        if (response == null) {
+          debugLog.error("SMAdapter.postSingleSignOnSuccess(): response is null");
+          throw new SAML2Exception("SMAdapter: response is null");
         }
 
         try {
