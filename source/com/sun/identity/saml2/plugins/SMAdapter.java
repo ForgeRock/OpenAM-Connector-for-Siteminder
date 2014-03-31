@@ -24,7 +24,7 @@
  *
  * Portions Copyrighted 2011-2012 Progress Software Corporation
  *
- * $Id: SMAdapter.java,v 1.7 2014/03/31 09:15:44 jah Exp $
+ * $Id: SMAdapter.java,v 1.8 2014/03/31 09:46:07 jah Exp $
  *
  */
 
@@ -86,7 +86,7 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
 
         if (debugLog.messageEnabled()) {
             for (Object mapKey : initParams.keySet()) {
-                debugLog.error("SMAdapter param " + (String)mapKey + " = " + (String)initParams.get(mapKey));
+                debugLog.message("SMAdapter param " + (String)mapKey + " = " + (String)initParams.get(mapKey));
             }
         }
 
@@ -190,6 +190,10 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
         boolean isFederation)
     throws SAML2Exception {
 
+        if (debugLog.messageEnabled()) {
+          debugLog.message("SMAdapter.postSingleSignOnSuccess() begin");
+        }
+
         if (smSessionUtils == null) {
           debugLog.error("SMAdapter.postSingleSignOnSuccess(): smSessionUtils is null");
           throw new SAML2Exception("SMAdapter: smSessionUtils is null");
@@ -225,6 +229,9 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
               throw new SAML2Exception("createSmSession() returned code " + retCode + ", user=" + amid.getName());
             }
 
+            if (debugLog.messageEnabled()) {
+              debugLog.message("SMAdapter.postSingleSignOnSuccess() end");
+            }
             return false;   
         } catch (Exception ex) {
             debugLog.error("SMAdapter.postSingleSignOnSuccess() caught Exception.", ex);
