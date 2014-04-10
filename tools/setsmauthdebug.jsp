@@ -1,7 +1,7 @@
 <%--
-  Portions Copyrighted 2011-2012 Progress Software Corporation
+  Portions Copyrighted 2011-2014 Progress Software Corporation
 
-  $Id: setsmauthdebug.jsp,v 1.3 2012/02/17 13:40:34 jah Exp $
+  $Id: setsmauthdebug.jsp,v 1.5 2014/04/10 09:48:37 jah Exp $
 --%>
 <%@page import="com.sun.identity.shared.debug.Debug"%>
 <%

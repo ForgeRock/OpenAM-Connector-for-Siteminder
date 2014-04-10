@@ -22,9 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Portions Copyrighted 2011-2012 Progress Software Corporation
+ * Portions Copyrighted 2011-2014 Progress Software Corporation
  *
- * $Id: OpenAMAuthScheme.java,v 1.4 2014/03/19 14:31:08 jah Exp $
+ * $Id: OpenAMAuthScheme.java,v 1.5 2014/04/10 09:48:37 jah Exp $
  *
  */
 

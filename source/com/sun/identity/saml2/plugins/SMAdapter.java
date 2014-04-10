@@ -22,9 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Portions Copyrighted 2011-2012 Progress Software Corporation
+ * Portions Copyrighted 2011-2014 Progress Software Corporation
  *
- * $Id: SMAdapter.java,v 1.8 2014/03/31 09:46:07 jah Exp $
+ * $Id: SMAdapter.java,v 1.9 2014/04/10 09:48:37 jah Exp $
  *
  */
 

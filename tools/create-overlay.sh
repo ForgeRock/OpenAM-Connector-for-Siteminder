@@ -1,6 +1,6 @@
 #!/bin/sh
-# Portions Copyrighted 2011-2012 Progress Software Corporation
-# $Id: create-overlay.sh,v 1.3 2012/02/17 11:23:57 jah Exp $
+# Portions Copyrighted 2011-2014 Progress Software Corporation
+# $Id: create-overlay.sh,v 1.5 2014/04/10 09:48:37 jah Exp $
 # This script will create an overlay directory structure that can be
 # zipped up for installing over an existing OpenAM webapp.
 if [ \( \! -d "${1}" \) -o \( \! -d "${1}/dist" \) -o \( ! -d "${2}" \) ]

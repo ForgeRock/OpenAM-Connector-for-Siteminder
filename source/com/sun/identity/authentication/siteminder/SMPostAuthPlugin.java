@@ -22,9 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Portions Copyrighted 2011-2012 Progress Software Corporation
+ * Portions Copyrighted 2011-2014 Progress Software Corporation
  *
- * $Id: SMPostAuthPlugin.java,v 1.5 2012/05/14 11:14:31 jah Exp $
+ * $Id: SMPostAuthPlugin.java,v 1.7 2014/04/10 09:48:37 jah Exp $
  *
  */
 
