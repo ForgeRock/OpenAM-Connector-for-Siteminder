@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.6 2014/03/17 09:58:00 jah Exp $
+$Id: README.txt,v 1.7 2014/04/10 09:37:38 jah Exp $
 
 This is the README for OpenAM connector for Computer Associates (CA) SiteMinder.
 
@@ -122,6 +122,12 @@ The connector requires configuration in both SiteMinder and OpenAM.
   in OpenAM and a working SiteMinder web agent installation on the OpenAM
   server host.
 
+* IMPORTANT: The user accounts are looked up in both OpenAM and SiteMinder
+  using the username (the login ID the user would normally type into
+  a login prompt). Make sure that the SiteMinder user directory configuration
+  and OpenAM realm datastore configuration is such that the username
+  lookups return the same account.
+
 SiteMinder configuration
 
 1) Create OpenAM custom authentication scheme. The parameters should be:
@@ -176,6 +182,13 @@ There are multiple modules for different tasks:
    * Add com.sun.identity.authentication.siteminder.SMCreateSessionPlugin
      to the authentication post processing classes in OpenAM realm
      authentication configuration.
+
+3) SAML2 SP adapter configuration.
+   * Add adapter class com.sun.identity.saml2.plugins.SMAdapter to
+     the local SAML2 SP properties.
+   * Add these parameters to the adapter environment:
+     SMLoginURL=<SiteMinder login URL>
+     SMCookieName=<SiteMinder cookie name> (Optional, defaults to SMSESSION)
 
 Troubleshooting
 ===============
